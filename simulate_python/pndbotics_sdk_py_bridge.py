@@ -8,9 +8,9 @@ from pndbotics_sdk_py.core.channel import ChannelSubscriber, ChannelPublisher
 
 from pndbotics_sdk_py.utils.thread import RecurrentThread
 
-from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowCmd_
-from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowState_
-from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import MotorState_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowState_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import MotorState_
 import config
 
 TOPIC_LOWCMD = "rt/lowcmd"
@@ -51,10 +51,10 @@ class pndSdkBridge:
             for i in range(self.num_motor):
                 self.mj_data.ctrl[i] = (
                     msg.motor_cmd[i].tau
-                    + msg.motor_cmd[i].kp
+                    + msg.motor_cmd[i].kp * 1.5
                     * (msg.motor_cmd[i].q - self.mj_data.sensordata[i])
-                    + msg.motor_cmd[i].kd
-                    * (
+                    + msg.motor_cmd[i].kd * 2.5
+                    * ( 
                         msg.motor_cmd[i].dq
                         - self.mj_data.sensordata[i + self.num_motor]
                     )

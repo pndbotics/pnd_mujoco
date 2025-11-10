@@ -4,7 +4,7 @@ import traceback
 import mujoco
 import numpy as np
 
-from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowCmd_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_
 from cyclonedds.domain import DomainParticipant
 from cyclonedds.sub import DataReader
 from cyclonedds.topic import Topic

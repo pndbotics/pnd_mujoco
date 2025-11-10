@@ -5,7 +5,7 @@ import time
 import threading
 from rclpy.node import Node
 # from pndbotics_sdk_py.core.channel import ChannelPublisher, ChannelFactoryInitialize
-from pnd_adam.msg import LowCmd, LowState, MotorCmd, MotorState
+from adam_u.msg import LowCmd, LowState, MotorCmd, MotorState
 
 # Kp 配置数组（对应19个关节）
 KP_CONFIG = [

@@ -79,7 +79,7 @@ input("Press enter to start")
 if __name__ == '__main__':
 
     if len(sys.argv) <2:
-        ChannelFactoryInitialize(1)
+        ChannelFactoryInitialize(1, "lo")
     else:
         ChannelFactoryInitialize(1, sys.argv[1])
 
