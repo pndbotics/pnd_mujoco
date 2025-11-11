@@ -4,7 +4,8 @@ import traceback
 import mujoco
 import numpy as np
 
-from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_
+import config
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_, LowState_, HandCmd_
 from cyclonedds.domain import DomainParticipant
 from cyclonedds.sub import DataReader
 from cyclonedds.topic import Topic
@@ -12,6 +13,7 @@ from cyclonedds.core import Listener
 
 TOPIC_LOWCMD = "rt/lowcmd"
 TOPIC_LOWSTATE = "rt/lowstate"
+TOPIC_HAND_POSE = "rt/handcmd"
 
 NUM_MOTOR_IDL_ADAM_U = 19
 NUM_MOTOR_IDL_ADAM_LITE = 23
@@ -27,31 +29,86 @@ class pndRos2Bridge:
         # ROS2/CycloneDDS subscriber setup
         self.sub_participant = DomainParticipant(2)
         self.sub_topic = Topic(self.sub_participant, TOPIC_LOWCMD, LowCmd_)
+        self.sub_hand_topic = Topic(self.sub_participant, TOPIC_HAND_POSE, HandCmd_)
         
         print("等待ROS 2消息...")
+                # subscriber hand cmd_
+        self.hand_cmd_reader = DataReader(
+            self.sub_participant, 
+            self.sub_hand_topic,
+            None,  # qos 参数，使用默认值
+            Listener(on_data_available=self.HandCmdHandler)
+        )
+
+
         self.sub_reader = DataReader(
             self.sub_participant, 
             self.sub_topic,
             None,  # qos 参数，使用默认值
             Listener(on_data_available=self.LowCmdHandler)
         )
-
     def LowCmdHandler(self, msg: LowCmd_):
         msgs = self.sub_reader.read()
         for msg in msgs:
-            print("[Reader] msg:", msg.motor_cmd[6].q)
             if self.mj_data != None:
                 for i in range(self.num_motor):
                     self.mj_data.ctrl[i] = (
                         msg.motor_cmd[i].tau
-                        + msg.motor_cmd[i].kp
+                        + msg.motor_cmd[i].kp * 1.5
                         * (msg.motor_cmd[i].q - self.mj_data.sensordata[i])
-                        + msg.motor_cmd[i].kd
+                        + msg.motor_cmd[i].kd * 2.5
                         * (
                             msg.motor_cmd[i].dq
                             - self.mj_data.sensordata[i + self.num_motor]
                         )
                     )
+
+    def PublishLowState(self):
+        if self.mj_data != None:
+            for i in range(self.num_motor):
+                self.low_state.motor_state[i].q = self.mj_data.sensordata[i]
+                self.low_state.motor_state[i].dq = self.mj_data.sensordata[
+                    i + self.num_motor
+                ]
+                self.low_state.motor_state[i].tau_est = self.mj_data.sensordata[
+                    i + 2 * self.num_motor
+                ]
+
+    def HandCmdHandler(self, msg: HandCmd_):
+        msgs = self.hand_cmd_reader.read()
+        for msg in msgs:
+            if self.mj_data != None:
+                fingers_pos = msg.position[0:12]
+                
+                # 创建 fingers 列表，每个 fingers_pos 的值重复两次
+                fingers = [finger for finger in fingers_pos for _ in range(2)]
+                
+                if config.HANDPOSE_SRC == 0:
+                    for i in range(self.num_motor, self.num_motor + 24):
+                        self.mj_data.ctrl[i] = fingers[i - self.num_motor]
+                else:
+                    # 修改 fingers 数组中的特定值
+                    fingers[10] = fingers[8] * 0.5
+                    fingers[8] = 2 * fingers[10]
+                    fingers[9] = 2 * fingers[10]
+                    fingers[22] = fingers[20] * 0.5
+                    fingers[20] = 2 * fingers[22]
+                    fingers[21] = 2 * fingers[22]
+                    
+                    for i in range(self.num_motor, self.num_motor + 24):
+                        self.mj_data.ctrl[i] = 1.6 - fingers[i - self.num_motor] * 0.0016
+                        
+                        if i == self.num_motor + 10:
+                            self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
+                        
+                        if i in (self.num_motor + 11, self.num_motor + 9, self.num_motor + 8):
+                            self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
+                        
+                        if i == self.num_motor + 22:
+                            self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
+                        
+                        if i in (self.num_motor + 23, self.num_motor + 21, self.num_motor + 20):
+                            self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
 
     def PrintSceneInformation(self):
         print(" ")

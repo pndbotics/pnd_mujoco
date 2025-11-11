@@ -7,6 +7,8 @@ from pndbotics_sdk_py.idl.default import adam_u_msg_dds__LowCmd_
 from pndbotics_sdk_py.idl.default import adam_u_msg_dds__LowState_
 from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_
 from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowState_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import HandCmd_
+from pndbotics_sdk_py.idl.default import adam_u_msg_dds__HandCmd_
 ADAM_U_NUM_MOTOR = 19
 KP_CONFIG = [
     60.0,  # waistRoll (0)
@@ -54,11 +56,11 @@ KD_CONFIG = [
 ]
 
 open_arm_pos = np.array([0, 0, 0,
-                            0, 0,
-                    0, 1.6, 0, 0,
-                         0, 0, 0,
-                   0, -1.6, 0, 0,
-                         0, 0, 0
+                       0.7, -0.5,
+        -1.6, 2.06, -1.65, -1.77,
+                      0.32, 0, 0,
+       - 1.6, -2.06, 1.65, -1.77,
+                      0.32, 0, 0
 ],
                               dtype=float)
 
@@ -70,6 +72,9 @@ close_arm_pos = np.array([0, 0, 0,
                           0, 0, 0
 ],
                                 dtype=float)
+
+open_hand = np.array([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000], dtype=int)
+close_hand = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], dtype=int)
 
 dt = 0.002
 runing_time = 0.0
@@ -86,8 +91,11 @@ if __name__ == '__main__':
     # Create a publisher to publish the data defined in UserData class
     pub = ChannelPublisher("rt/lowcmd", LowCmd_)
     pub.Init()
-
     cmd = adam_u_msg_dds__LowCmd_()
+
+    hand_pub = ChannelPublisher("rt/handcmd", HandCmd_)
+    hand_pub.Init()
+    hand_cmd = adam_u_msg_dds__HandCmd_()
     #for i in range(19):
      #   cmd.motor_cmd[i].q = 0.0
       #  cmd.motor_cmd[i].kp = 0.0
@@ -113,6 +121,9 @@ if __name__ == '__main__':
                 cmd.motor_cmd[i].dq = 0.0
                 cmd.motor_cmd[i].kd = KD_CONFIG[i]
                 cmd.motor_cmd[i].tau = 0.0
+
+            for i in range(12):
+                hand_cmd.position[i] = close_hand[i]
         else:
             # Then stand down
             phase = np.tanh((runing_time - 3.0) / 1.2)
@@ -125,8 +136,12 @@ if __name__ == '__main__':
                 cmd.motor_cmd[i].kd = KD_CONFIG[i]
                 cmd.motor_cmd[i].tau = 0.0
 
+            for i in range(12):
+                hand_cmd.position[i] = open_hand[i]
+
         #print(cmd.motor_cmd[6].q)
         pub.Write(cmd)
+        hand_pub.Write(hand_cmd)
 
         time_until_next_step = dt - (time.perf_counter() - step_start)
         if time_until_next_step > 0:

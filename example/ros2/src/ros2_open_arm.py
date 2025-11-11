@@ -5,7 +5,7 @@ import time
 import threading
 from rclpy.node import Node
 # from pndbotics_sdk_py.core.channel import ChannelPublisher, ChannelFactoryInitialize
-from pnd_adam.msg import LowCmd, LowState, MotorCmd, MotorState
+from adam_u.msg import LowCmd, LowState, MotorCmd, MotorState, HandCmd, HandState
 
 # Kp 配置数组（对应19个关节）
 KP_CONFIG = [
@@ -57,6 +57,7 @@ class DemonController(Node):
     def __init__(self):
         super().__init__('demon_controller')
         self.lowcmd_pub_ = self.create_publisher(LowCmd, 'lowcmd', 1)
+        self.handcmd_pub_ = self.create_publisher(HandCmd, 'handcmd', 1)
         
         self.dt = 0.0025 
         self.timer = self.create_timer(self.dt, self.Control)
@@ -72,11 +73,11 @@ class DemonController(Node):
             
         self.joint_num = 19  # 根据实际机器人配置修改
         self.open_arm_pos = [0, 0, 0,
-                                0, 0,
-                        0, 1.6, 0, 0,
-                             0, 0, 0,
-                       0, -1.6, 0, 0,
-                             0, 0, 0]
+                           0.7, -0.5,
+            -1.6, 2.06, -1.65, -1.77,
+                          0.32, 0, 0,
+           - 1.6, -2.06, 1.65, -1.77,
+                          0.32, 0, 0]
 
         self.close_arm_pos = [0, 0, 0,
                                  0, 0,
@@ -84,6 +85,10 @@ class DemonController(Node):
                               0, 0, 0,
                            0, 0, 0, 0,
                               0, 0, 0]
+        
+        self.open_hand = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]
+        self.close_hand = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
         self.target_positions = [0.0] * self.joint_num
         self.runing_time = 0.0
 
@@ -92,6 +97,7 @@ class DemonController(Node):
  
         self.runing_time += self.dt
         cmd = LowCmd()
+        handcmd = HandCmd()
         if (self.runing_time < 3.0):
             # Stand up in first 3 second
             
@@ -105,6 +111,8 @@ class DemonController(Node):
                 cmd.motor_cmd[i].dq = 0.0
                 cmd.motor_cmd[i].kd = KD_CONFIG[i]
                 cmd.motor_cmd[i].tau = 0.0
+            for i in range(12):
+                handcmd.position[i] = self.open_hand[i] * 0.6
         else:
             # Then stand down
             phase = math.tanh((self.runing_time - 3.0) / 1.2)
@@ -116,8 +124,11 @@ class DemonController(Node):
                 cmd.motor_cmd[i].dq = 0.0
                 cmd.motor_cmd[i].kd = KD_CONFIG[i]
                 cmd.motor_cmd[i].tau = 0.0
-        print("[Publisher] cmd:", cmd.motor_cmd[6].q)
+            for i in range(12):
+                handcmd.position[i] = self.close_hand[i] * 0.6
+        print("[Publisher] handcmd:", handcmd.position[6])
         self.lowcmd_pub_.publish(cmd)
+        self.handcmd_pub_.publish(handcmd)
 
         time_until_next_step = self.dt - (time.perf_counter() - step_start)
         if time_until_next_step > 0:

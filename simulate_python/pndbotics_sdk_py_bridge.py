@@ -9,12 +9,14 @@ from pndbotics_sdk_py.core.channel import ChannelSubscriber, ChannelPublisher
 from pndbotics_sdk_py.utils.thread import RecurrentThread
 
 from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import HandCmd_
 from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowState_
 from pndbotics_sdk_py.idl.adam_u.msg.dds_ import MotorState_
 import config
 
 TOPIC_LOWCMD = "rt/lowcmd"
 TOPIC_LOWSTATE = "rt/lowstate"
+TOPIC_HAND_POSE = "rt/handcmd"
 
 NUM_MOTOR_IDL_ADAM_U = 19
 NUM_MOTOR_IDL_ADAM_LITE = 23
@@ -43,6 +45,10 @@ class pndSdkBridge:
         )
         self.lowStateThread.Start()
 
+        # subscriber hand cmd_
+        self.hand_cmd_suber = ChannelSubscriber(TOPIC_HAND_POSE, HandCmd_)
+        self.hand_cmd_suber.Init(self.HandCmdHandler, 10)
+
         self.low_cmd_suber = ChannelSubscriber(TOPIC_LOWCMD, LowCmd_)
         self.low_cmd_suber.Init(self.LowCmdHandler, 10)
 
@@ -70,6 +76,41 @@ class pndSdkBridge:
                 self.low_state.motor_state[i].tau_est = self.mj_data.sensordata[
                     i + 2 * self.num_motor
                 ]
+
+    def HandCmdHandler(self, msg: HandCmd_):
+        if self.mj_data != None:
+            fingers_pos = msg.position[0:12]
+            
+            # 创建 fingers 列表，每个 fingers_pos 的值重复两次
+            fingers = [finger for finger in fingers_pos for _ in range(2)]
+            
+            if config.HANDPOSE_SRC == 0:
+                for i in range(self.num_motor, self.num_motor + 24):
+                    self.mj_data.ctrl[i] = fingers[i - self.num_motor]
+            else:
+                # 修改 fingers 数组中的特定值
+                fingers[10] = fingers[8] * 0.5
+                fingers[8] = 2 * fingers[10]
+                fingers[9] = 2 * fingers[10]
+                fingers[22] = fingers[20] * 0.5
+                fingers[20] = 2 * fingers[22]
+                fingers[21] = 2 * fingers[22]
+                
+                for i in range(self.num_motor, self.num_motor + 24):
+                    self.mj_data.ctrl[i] = 1.6 - fingers[i - self.num_motor] * 0.0016
+                    
+                    if i == self.num_motor + 10:
+                        self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
+                    
+                    if i in (self.num_motor + 11, self.num_motor + 9, self.num_motor + 8):
+                        self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
+                    
+                    if i == self.num_motor + 22:
+                        self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
+                    
+                    if i in (self.num_motor + 23, self.num_motor + 21, self.num_motor + 20):
+                        self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
+
 
     def PrintSceneInformation(self):
         print(" ")
