@@ -74,7 +74,7 @@ python3 ./pnd_mujoco.py
 在新终端运行
 
 ```bash
-python3 ./test/test_pndbotics_sdk.py
+python3 example/python/open_arm.py
 ```
 
 adam_u机器人会打开手臂然后放下。
