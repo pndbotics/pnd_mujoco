@@ -47,7 +47,7 @@ sudo apt install libyaml-cpp-dev libspdlog-dev libboost-all-dev libglfw3-dev
 ```bash
 cd ~
 sudo apt install python3-pip
-git clone https://github.com/pndrobotics/pnd_sdk_python.git
+git clone https://github.com/pndbotics/pnd_sdk_python.git
 cd pnd_sdk_python
 pip3 install -e .
 ```
