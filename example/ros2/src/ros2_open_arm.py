@@ -56,8 +56,8 @@ KD_CONFIG = [
 class DemonController(Node):
     def __init__(self):
         super().__init__('demon_controller')
-        self.lowcmd_pub_ = self.create_publisher(LowCmd, 'lowcmd', 1)
-        self.handcmd_pub_ = self.create_publisher(HandCmd, 'handcmd', 1)
+        self.lowcmd_pub_ = self.create_publisher(LowCmd, 'lowcmd', 10)
+        self.handcmd_pub_ = self.create_publisher(HandCmd, 'handcmd', 10)
         
         self.dt = 0.0025 
         self.timer = self.create_timer(self.dt, self.Control)
@@ -126,7 +126,6 @@ class DemonController(Node):
                 cmd.motor_cmd[i].tau = 0.0
             for i in range(12):
                 handcmd.position[i] = self.close_hand[i] * 0.6
-        print("[Publisher] handcmd:", handcmd.position[6])
         self.lowcmd_pub_.publish(cmd)
         self.handcmd_pub_.publish(handcmd)
 
@@ -137,6 +136,7 @@ class DemonController(Node):
     def getLowState(self, msg):
         with self.mutex:
             self.motor_state = msg
+            # print("received lowstate")
             
 def main(args=None):
     os.environ["ROS_DOMAIN_ID"] = "2"

@@ -8,10 +8,8 @@ from pndbotics_sdk_py.core.channel import ChannelSubscriber, ChannelPublisher
 
 from pndbotics_sdk_py.utils.thread import RecurrentThread
 
-from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_
-from pndbotics_sdk_py.idl.adam_u.msg.dds_ import HandCmd_
-from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowState_
-from pndbotics_sdk_py.idl.adam_u.msg.dds_ import MotorState_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import *
+from pndbotics_sdk_py.idl.default import adam_u_msg_dds__LowState_
 import config
 
 TOPIC_LOWCMD = "rt/lowcmd"
@@ -36,8 +34,7 @@ class pndSdkBridge:
         self.joystick = None
 
         # PNDBotics SDK message
-        motor_states = [MotorState_(0, 0.0, 0.0, 0.0, 0, 0) for _ in range(self.num_motor)]
-        self.low_state = LowState_(motor_states, 0)
+        self.low_state = adam_u_msg_dds__LowState_()
         self.low_state_puber = ChannelPublisher(TOPIC_LOWSTATE, LowState_)
         self.low_state_puber.Init()
         self.lowStateThread = RecurrentThread(
@@ -76,6 +73,7 @@ class pndSdkBridge:
                 self.low_state.motor_state[i].tau_est = self.mj_data.sensordata[
                     i + 2 * self.num_motor
                 ]
+            self.low_state_puber.Write(self.low_state)
 
     def HandCmdHandler(self, msg: HandCmd_):
         if self.mj_data != None:

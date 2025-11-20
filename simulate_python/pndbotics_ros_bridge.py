@@ -6,6 +6,9 @@ import numpy as np
 
 import config
 from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_, LowState_, HandCmd_
+from pndbotics_sdk_py.idl.default import adam_u_msg_dds__LowState_
+from pndbotics_sdk_py.core.channel import ChannelPublisher
+from pndbotics_sdk_py.utils.thread import RecurrentThread
 from cyclonedds.domain import DomainParticipant
 from cyclonedds.sub import DataReader
 from cyclonedds.topic import Topic
@@ -24,17 +27,27 @@ class pndRos2Bridge:
     def __init__(self, mj_model, mj_data):
         self.mj_model = mj_model
         self.mj_data = mj_data
+        self.dt = self.mj_model.opt.timestep
 
         self.num_motor = NUM_MOTOR_IDL_ADAM_U
         # ROS2/CycloneDDS subscriber setup
-        self.sub_participant = DomainParticipant(2)
-        self.sub_topic = Topic(self.sub_participant, TOPIC_LOWCMD, LowCmd_)
-        self.sub_hand_topic = Topic(self.sub_participant, TOPIC_HAND_POSE, HandCmd_)
+        self.participant = DomainParticipant(2)
+        self.sub_topic = Topic(self.participant, TOPIC_LOWCMD, LowCmd_)
+        self.sub_hand_topic = Topic(self.participant, TOPIC_HAND_POSE, HandCmd_)
+
         
+        self.low_state = adam_u_msg_dds__LowState_()
+        self.low_state_puber = ChannelPublisher(TOPIC_LOWSTATE, LowState_)
+        self.low_state_puber.Init()
+        self.lowStateThread = RecurrentThread(
+            interval=self.dt, target=self.PublishLowState, name="sim_lowstate"
+        )
+        self.lowStateThread.Start()
+
         print("等待ROS 2消息...")
                 # subscriber hand cmd_
         self.hand_cmd_reader = DataReader(
-            self.sub_participant, 
+            self.participant, 
             self.sub_hand_topic,
             None,  # qos 参数，使用默认值
             Listener(on_data_available=self.HandCmdHandler)
@@ -42,11 +55,12 @@ class pndRos2Bridge:
 
 
         self.sub_reader = DataReader(
-            self.sub_participant, 
+            self.participant, 
             self.sub_topic,
             None,  # qos 参数，使用默认值
             Listener(on_data_available=self.LowCmdHandler)
         )
+        
     def LowCmdHandler(self, msg: LowCmd_):
         msgs = self.sub_reader.read()
         for msg in msgs:
@@ -73,6 +87,7 @@ class pndRos2Bridge:
                 self.low_state.motor_state[i].tau_est = self.mj_data.sensordata[
                     i + 2 * self.num_motor
                 ]
+            self.low_state_puber.Write(self.low_state)
 
     def HandCmdHandler(self, msg: HandCmd_):
         msgs = self.hand_cmd_reader.read()

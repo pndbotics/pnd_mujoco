@@ -44,8 +44,13 @@ def SimulationThread():
     
     if config.SDK_TYPE == "ROS2":
         # pnd = pndSdkBridge(mj_model, mj_data)
+        ChannelFactoryInitialize(config.DOMAIN_ID)
         pnd = pndRos2Bridge(mj_model, mj_data)
     elif config.SDK_TYPE == "DDS":
+        # use python sdk example 
+        # ChannelFactoryInitialize(config.DOMAIN_ID)
+        
+        # use pnd_mujoco open_arm.py example
         ChannelFactoryInitialize(config.DOMAIN_ID, config.INTERFACE)
         pnd = pndSdkBridge(mj_model, mj_data)
 
