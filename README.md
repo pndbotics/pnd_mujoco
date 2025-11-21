@@ -1,49 +1,86 @@
-# 介绍
+# PND Mujoco
 
-## PND mujoco
+![PND_API](./PND_API.png)
 
-`pnd_mujoco` 是基于 `pnd sdk` 和 `mujoco` 开发的仿真器。用户使用 `pnd_ros2` 和 `pnd_sdk_python` 开发的控制程序可以方便地接入该仿真器，实现仿真到实物的开发流程。仓库别基于 python cyclonedds 以及 python ros2 humble实现了两个版本的仿真器
+<div align="center">
 
-## 目录结构
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)](https://releases.ubuntu.com/22.04/)
+[![Mujoco](https://img.shields.io/badge/Mujoco-3.2.0-005BBB?logo=google&logoColor=white)](https://mujoco.org/)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![CycloneDDS](https://img.shields.io/badge/CycloneDDS-latest-6D28D9)](https://cyclonedds.io/)
+[![ROS2](https://img.shields.io/badge/ROS2-Humble-22314E?logo=ros&logoColor=white)](https://docs.ros.org/en/humble/)
 
-- `simulate_python`: 基于 pnd_sdk_py 和 mujoco (python) 实现的仿真器
-- `pnd_robots`: pnd sdk 支持的机器人 mjcf 描述文件
-- `example`: 例程
+![Updated At](https://img.shields.io/badge/Updated_At-November-64748B?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.0.3-2563EB?style=flat-square)
+[![License](https://img.shields.io/badge/License-BSD--3--Clause-059669?style=flat-square)](https://opensource.org/licenses/BSD-3-Clause)
+[![Issues](https://img.shields.io/badge/issues-open-EF4444?style=flat-square)](https://github.com/pndbotics/pnd_mujoco/issues)
 
-## 支持的 PND sdk 消息：
 
-**当前版本仅支持底层开发，主要用于控制器的 sim to real 验证**
+**A lightweight simulation framework integrating PND SDK and MuJoCo for rapid sim‑to‑real development. The repository provides two versions of the simulator, implemented respectively using Python CycloneDDS and Python ROS2 Humble.**
 
-- `LowCmd`: 电机控制指令
-- `LowState`：电机状态
+</div>
 
-## 消息(DDS idl)类型说明
+## ✨ Features
 
-- PND Adam_u 型号的机器人使用 adam_u idl 实现底层通信
+- **Plug‑and‑Play Sim‑to‑Real**: Run the same controller code in both simulation and real robots  
+- **Full PND SDK Compatibility**: Supports PND LowCmd/LowState messaging  
+- **ROS2 / DDS Support**: Select between ROS2 or pure DDS communication  
+- **PND Robot Models Included**: MJCF models for PND Adam‑U and others  
+- **Python & C++ APIs**: Unified control interface across platforms  
 
-## 相关链接
+## 📋 Table of Contents
 
-- [pnd_sdk_python](https://github.com/pndbotics/pnd_sdk_python)
-  - [pnd_ros2](https://github.com/pndbotics/pnd_ros2)
-  - [PND wiki](https://wiki.pndbotics.com/half_robot/pnd_adam_u_sdk/)
-- [mujoco doc](https://mujoco.readthedocs.io/en/stable/overview.html)
+- [What's New](#-whats-new)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Usage Examples](#-usage-examples)
+- [API Reference](#-api-reference)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Reference](#-referecnce)
+- [Acknowledgement](#-acknowledgement)
+- [Contact](#-contact)
+- [Version Log](#-version-log)
 
-# 安装
+## 🆕 What's New
 
-## c++ 仿真器 (simulate)
+### Latest Release — v1.0.3 (2025)
 
-### 1. 依赖
+#### 🚀 New Features
+- Python-based MuJoCo simulator using pnd_sdk_python
+- C++ simulator using pnd_sdk
+- Virtual elastic-band hoist for humanoid stability debugging
+- ROS2 Humble compatibility
 
+#### 🐛 Bug Fixes
+- Fixed DDS domain conflict issues  
+- Fixed joystick input offset issues
+
+#### ⚡ Performance Improvements
+- Reduced simulation step latency  
+- Improved synchronization between viewer and physics steps
+
+## 🛠 Installation
+
+### Prerequisites
+
+- **Ubuntu 22.04**
+- **Python 3.8+**
+- **MuJoCo 3.2.0**
+- **Cyclonedds**
+- **ROS2 Humble (optional)**
+
+### C++ Simulator Installation
+
+#### Dependencies
 ```bash
 sudo apt install libyaml-cpp-dev libspdlog-dev libboost-all-dev libglfw3-dev
 ```
 
-## Python 仿真器 (simulate_python)
+### Python Simulator Installation (`simulate_python`)
 
-### 1. 依赖
-
-#### pnd_sdk_python
-
+#### 1. Install pnd_sdk_python
 ```bash
 cd ~
 sudo apt install python3-pip
@@ -52,49 +89,44 @@ cd pnd_sdk_python
 pip3 install -e .
 ```
 
-#### mujoco-python
-
+#### 2. Install MuJoCo Python
 ```bash
-pip3 install mujoco
+pip3 install mujoco==3.2.0
 ```
 
-#### joystick
-
+#### 3. Install joystick support
 ```bash
 pip3 install pygame
 ```
 
-### 2. 测试
-
+#### 4. Test Simulation
 ```bash
-cd ./simulate_python
-python3 ./pnd_mujoco.py
+cd simulate_python
+python3 pnd_mujoco.py
 ```
 
-在新终端运行
-
+Open another terminal:
 ```bash
 python3 example/python/open_arm.py
 ```
 
-adam_u机器人会打开手臂然后放下。
+The Adam‑U robot in simulation will lift and lower its arm.
 
-# 使用
 
-### python 仿真器
+## 🚀 Quick Start
 
-python 仿真器的配置文件位于 `/simulate_python/config.py` 中：
+### Python Simulator Configuration  
+Configuration file: `simulate_python/config.py`
 
 ```python
-
 ROBOT = "adam_u"
 
-# 机器人仿真仿真场景文件
+# Robot simulation scene file
 ROBOT_SCENE = "../pnd_robots/" + ROBOT + "/scene.xml" # Robot scene
 
 
-# dds domain id，最好与实物(实物上默认为 0)区分开
-单独打开ROS2或者DDS以及其对应的ID
+# dds domain id. It is recommended to use a different one from the real robot (real robot defaults to 0)
+Separate startup for ROS2 or DDS and their corresponding IDs
 # For ROS2
 SDK_TYPE="ROS2" # "ROS2" or "DDS"
 DOMAIN_ID = 2 # Domain id
@@ -103,84 +135,167 @@ DOMAIN_ID = 2 # Domain id
 SDK_TYPE="DDS" # "ROS2" or "DDS"
 DOMAIN_ID = 1 # Domain id
 
-# 网卡名称, 对于仿真建议使用本地回环 "lo"
+# Network interface name. For simulation, it is recommended to use the local loopback "lo"
 INTERFACE = "lo" # Interface
 
-# 是否输出机器人连杆、关节、传感器等信息，True 为输出
+# Whether to print robot link, joint, sensor and other information. True means print enabled
 PRINT_SCENE_INFORMATION = True
 
 USE_JOYSTICK = 1 # Simulate PND WirelessController using a gamepad
 JOYSTICK_TYPE = "xbox" # support "xbox" and "switch" gamepad layout
 JOYSTICK_DEVICE = 0 # Joystick number
 
-# 是否使用虚拟挂带, 1 为启用
-# 主要用于模拟 adam 机器人初始化挂起的过程
+# Whether to use the virtual elastic band. 1 means enabled
+# Mainly used to simulate the hanging state during adam robot initialization
 ENABLE_ELASTIC_BAND = False
 
-# 仿真步长 单位(s)
-# 为保证仿真的可靠性，需要大于 viewer.sync() 渲染一次所需要的时间
+# Simulation timestep (s)
+# To ensure simulation stability, the timestep must be larger than the rendering time of one viewer.sync() call
 SIMULATE_DT = 0.003
 
-# 可视化界面的运行步长，0.02 对应 50fps/s
+# Visualization timestep. 0.02 corresponds to 50fps
 VIEWER_DT = 0.02
+
 ```
 
-### 人形机器人虚拟挂带
+## 📖 Usage Examples
 
-考虑到人形机器人不便于从平地上启动并进行调试，在仿真中设计了一个虚拟挂带，用于模拟人形机器人的吊起和放下。设置 `enable_elastic_band/ENABLE_ELASTIC_BAND = 1` 可以启用虚拟挂带。加载机器人后，按 `9` 启用或松开挂带，按 `7` 放下机器人，按 `8` 吊起机器人。
+### Humanoid Virtual Hoist  
+To simulate the suspension & release process of humanoid robots:
+- Enable in config:
+```python
+ENABLE_ELASTIC_BAND = True
+```
+- Controls:
+    - `9` — engage/release hoist  
+    - `7` — lower robot  
+    - `8` — lift robot  
 
-## sim to real
+### Sim to Real
 
-`example` 文件夹下提供了使用不同接口实现, 这些例子简演示了如何使用 PND 提供的接口实现仿真到实物的实现。下面是每个文件夹名称的解释：
+Examples located in `example/`:
 
-- `cpp`: 基于 `C++`, 使用 `pnd_sdk2` 接口
-- `python`: 基于 `python`，使用 `pnd_sdk_python` 接口
-- `ros2`: 基于`ros2`，使用 `pnd_ros2` 接口
+| Folder   | Description                            |
+| -------- | -------------------------------------- |
+| `cpp`    | C++ examples using `pnd_sdk`          |
+| `python` | Python examples using `pnd_sdk_python` |
+| `ros2`   | ROS2 examples using `pnd_ros2`         |
 
-### pnd_sdk_python
-
-1. 运行：
+### Python Example: Sim vs Real
 
 ```bash
-python3 ./open_arm.py # 控制仿真中的机器人
-python3 ./open_arm.py enp3s0 # 控制机器人实物，其中 enp3s0 为机器人所连接的网卡名称
+python3 ./open_arm.py           # simulation
+python3 ./open_arm.py enp3s0    # real robot (network interface)
+
 ```
 
-2. sim to real
-
+Program logic:
 ```python
-if len(sys.argv) <2:
-    // 如果没有输入网卡，使用仿真的 domian id 和 网卡(本地)
-    ChannelFactoryInitialize(1, "lo")
+if len(sys.argv) < 2:
+    ChannelFactoryInitialize(1, "lo")   # simulation
 else:
-    // 否则使用指定的网卡
-    ChannelFactoryInitialize(0, sys.argv[1])
+    ChannelFactoryInitialize(1, sys.argv[1])   # real robot
 ```
 
-### pnd_ros2
+## 🔧 API Reference
 
-1. 编译安装
-   首先确保已经正确配置好 pnd_ros2 环境，见 [pnd_ros2](https://github.com/pndrobotics/pnd_ros2)。
+### ROS2 Example
 
+#### 1. Build
 ```bash
 source ~/pnd_ros2/setup.sh
 cd example/ros2
 colcon build
 ```
 
-2. 运行仿真
-
+#### 2. Run in simulation
 ```bash
-source ~/pnd_ros2/setup_local.sh # 使用本地网卡
-export ROS_DOMAIN_ID=1 # 修改domain id 与仿真一致
-./install/open_arm/bin/open_arm # 运行
+source ~/pnd_ros2/setup_local.sh
+export ROS_DOMAIN_ID=2
+./install/open_arm/bin/open_arm
 ```
 
-3. 运行实物
-
+#### 3. Run on real robot
 ```bash
-source ~/pnd_ros2/setup.sh # 使用机器人连接的网卡
-export ROS_DOMAIN_ID=2 # 使用默认的 domain id
-./install/open_arm/bin/open_arm # 运行
+source ~/pnd_ros2/setup.sh
+export ROS_DOMAIN_ID=2
+./install/open_arm/bin/open_arm
 ```
 
+### Supported PND SDK Messages
+
+- `LowCmd` — motor control command
+- `LowState` — motor state feedback
+
+### Message (DDS IDL) Type
+The PND Adam-U robot model uses the `adam_u idl` for low-level communication.
+
+## 🐛 Troubleshooting
+
+### ROS2 node not found  
+```bash
+source install/setup.bash
+ros2 pkg executables pnd_mujoco
+```
+
+### Permission issues  
+```bash
+sudo usermod -a -G dialout $USER
+sudo usermod -a -G tty $USER
+sudo reboot
+```
+
+### DDS/ROS2 domain conflict
+Use different `DOMAIN_ID` for simulation and real robot.
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+Feel free to open issues or pull requests.
+
+## 📄 License
+
+[BSD-3 Clause © PNDbotics](./LICENSE)
+
+## 📚️ Reference
+
+- [pnd_sdk_python](https://github.com/pndbotics/pnd_sdk_python)
+  - [pnd_ros2](https://github.com/pndbotics/pnd_ros2)
+  - [PND wiki](https://wiki.pndbotics.com/half_robot/pnd_adam_u_sdk/)
+- [mujoco doc](https://mujoco.readthedocs.io/en/stable/overview.html)
+
+## 🙏 Acknowledgement
+- MuJoCo physics engine
+- ROS2 community
+- DDS community
+- PNDbotics SDK ecosystem
+
+## 📞 Contact
+
+- **PNDbotics**  
+- Wiki: https://wiki.pndbotics.com  
+- SDK: https://github.com/pndbotics/pnd_sdk_python  
+- Issues: https://github.com/pndbotics/pnd_mujoco/issues
+
+## 📜 Version Log
+
+| Version | Date       | Updates                                                                              |
+| ------- | ---------- | ------------------------------------------------------------------------------------ |
+| v1.0.3  | 2025-11-20 | Get state in ros2 |
+| v1.0.2  | 2025-11-17 | Change the meshes and add Columns mass to 88 kg |
+| v1.0.1  | 2025-11-11 | Add ros2 example & Support hands |
+| v1.0.0  | 2025-11-10 | Initial release|
+
+---
+
+<div align="center">
+
+[![Website](https://img.shields.io/badge/Website-PNDbotics-black?)](https://www.pndbotics.com)
+[![Twitter](https://img.shields.io/badge/Twitter-@PNDbotics-1DA1F2?logo=twitter&logoColor=white)](https://x.com/PNDbotics)
+[![YouTube](https://img.shields.io/badge/YouTube-ff0000?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/@PNDbotics)
+[![Bilibili](https://img.shields.io/badge/-bilibili-ff69b4?style=flat&labelColor=ff69b4&logo=bilibili&logoColor=white)](https://space.bilibili.com/303744535)
+
+**⭐ Star us on GitHub — it helps!**
+
+</div>
