@@ -5,7 +5,7 @@ import time
 import threading
 from rclpy.node import Node
 # from pndbotics_sdk_py.core.channel import ChannelPublisher, ChannelFactoryInitialize
-from pnd_adam.msg import LowCmd, LowState, MotorCmd, MotorState, HandCmd, HandState
+from adam_u.msg import LowCmd, LowState, MotorCmd, MotorState, HandCmd, HandState
 
 # Kp 配置数组（对应19个关节）
 KP_CONFIG = [
@@ -97,8 +97,6 @@ class DemonController(Node):
  
         self.runing_time += self.dt
         cmd = LowCmd()
-        cmd.motor_cmd = [MotorCmd() for _ in range(19)]
-        
         handcmd = HandCmd()
         if (self.runing_time < 3.0):
             # Stand up in first 3 second
@@ -141,7 +139,7 @@ class DemonController(Node):
             # print("received lowstate")
             
 def main(args=None):
-    os.environ["ROS_DOMAIN_ID"] = "1"
+    os.environ["ROS_DOMAIN_ID"] = "2"
     # os.environ["ROS_LOCALHOST"] = "127.0.0.1"
     rclpy.init(args=args)
     demon_controller = DemonController()

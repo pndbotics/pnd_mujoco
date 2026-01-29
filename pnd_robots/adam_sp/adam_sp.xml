@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mujoco model="adam_sp">
+<mujoco model="adam_pro">
   <default>
     <default class="visual">
       <geom group="2" type="mesh" contype="0" conaffinity="0" />
@@ -530,12 +530,12 @@
             </body>
             <body name="neckYaw_link" pos="-0.013 0 0.29855">
               <inertial pos="0.0228442 -0.00120876 0.0992634" quat="0.719761 0.0861591 0.0813325 0.684036" mass="0.399168" diaginertia="0.00132274 0.00131438 0.000128684" />
-              <!-- <joint name="neckYaw" pos="0 0 0" axis="0 0 1" range="-1.571 1.571" actuatorfrcrange="-6.4 6.4" /> -->
+              <joint name="neckYaw" pos="0 0 0" axis="0 0 1" range="-1.571 1.571" actuatorfrcrange="-6.4 6.4" />
               <geom material="black" mesh="neckYaw_link" class="visual" />
               <geom mesh="neckYaw_link" class="collision" />
               <body name="neckPitch_link" pos="0.0316 0.01995 0.14595">
                 <inertial pos="0.0174597 -0.0210407 0.0470534" quat="0.0369738 0.852876 0.0341259 0.519683" mass="0.956204" diaginertia="0.00368991 0.00348806 0.00231156" />
-                <!-- <joint name="neckPitch" pos="0 0 0" axis="0 1 0" range="-0.873 0.873" actuatorfrcrange="-6.4 6.4" /> -->
+                <joint name="neckPitch" pos="0 0 0" axis="0 1 0" range="-0.873 0.873" actuatorfrcrange="-6.4 6.4" />
                 <geom material="black" mesh="neckPitch_link" class="visual" />
                 <geom mesh="neckPitch_link" class="collision" />
                 <camera name="left_zed" pos="0.096 0.0118 0.0407" xyaxes="0 -1 0 0 0 1" />
@@ -577,8 +577,8 @@
     <motor joint="wristYaw_Right" name="wristYaw_Right" ctrlrange="-6.4 6.4" />
     <motor joint="wristPitch_Right" name="wristPitch_Right" ctrlrange="-6.4 6.4" />
     <motor joint="wristRoll_Right" name="wristRoll_Right" ctrlrange="-6.4 6.4" />
-    <!-- <motor joint="neckYaw" name="neckYaw" ctrlrange="-6.4 6.4" />
-    <motor joint="neckPitch" name="neckPitch" ctrlrange="-6.4 6.4" /> -->
+    <motor joint="neckYaw" name="neckYaw" ctrlrange="-6.4 6.4" />
+    <motor joint="neckPitch" name="neckPitch" ctrlrange="-6.4 6.4" />
 
     <position joint="L_pinky_DIP_joint" name="L_pinky_DIP_joint" ctrlrange="0.0 1.6" />
     <position joint="L_pinky_MCP_joint" name="L_pinky_MCP_joint" ctrlrange="0.0 1.6" />
@@ -635,9 +635,8 @@
     <jointpos name="pos_wristYaw_Right" joint="wristYaw_Right" />
     <jointpos name="pos_wristPitch_Right" joint="wristPitch_Right" />
     <jointpos name="pos_wristRoll_Right" joint="wristRoll_Right" />
-    <!-- <jointpos name="pos_neckYaw" joint="neckYaw" />
-    <jointpos name="pos_neckPitch" joint="neckPitch" /> -->
-
+    <jointpos name="pos_neckYaw" joint="neckYaw" />
+    <jointpos name="pos_neckPitch" joint="neckPitch" />
     <jointvel name="vel_hipPitch_Left" joint="hipPitch_Left" />
     <jointvel name="vel_hipRoll_Left" joint="hipRoll_Left" />
     <jointvel name="vel_hipYaw_Left" joint="hipYaw_Left" />
@@ -667,9 +666,8 @@
     <jointvel name="vel_wristYaw_Right" joint="wristYaw_Right" />
     <jointvel name="vel_wristPitch_Right" joint="wristPitch_Right" />
     <jointvel name="vel_wristRoll_Right" joint="wristRoll_Right" />
-    <!-- <jointvel name="vel_neckYaw" joint="neckYaw" />
-    <jointvel name="vel_neckPitch" joint="neckPitch" /> -->
-
+    <jointvel name="vel_neckYaw" joint="neckYaw" />
+    <jointvel name="vel_neckPitch" joint="neckPitch" />
     <jointactuatorfrc name="force_hipPitch_Left" joint="hipPitch_Left" />
     <jointactuatorfrc name="force_hipRoll_Left" joint="hipRoll_Left" />
     <jointactuatorfrc name="force_hipYaw_Left" joint="hipYaw_Left" />
@@ -699,8 +697,8 @@
     <jointactuatorfrc name="force_wristYaw_Right" joint="wristYaw_Right" />
     <jointactuatorfrc name="force_wristPitch_Right" joint="wristPitch_Right" />
     <jointactuatorfrc name="force_wristRoll_Right" joint="wristRoll_Right" />
-    <!-- <jointactuatorfrc name="force_neckYaw" joint="neckYaw" />
-    <jointactuatorfrc name="force_neckPitch" joint="neckPitch" /> -->
+    <jointactuatorfrc name="force_neckYaw" joint="neckYaw" />
+    <jointactuatorfrc name="force_neckPitch" joint="neckPitch" />
 
 		<framequat name="imu_quat" objtype="site" objname="imu" />
 		<gyro name="imu_gyro" site="imu" />

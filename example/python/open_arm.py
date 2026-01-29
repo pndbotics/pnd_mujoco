@@ -3,12 +3,12 @@ import sys
 import numpy as np
 
 from pndbotics_sdk_py.core.channel import ChannelPublisher, ChannelFactoryInitialize
-from pndbotics_sdk_py.idl.default import pnd_adam_msg_dds__LowCmd_
-from pndbotics_sdk_py.idl.default import pnd_adam_msg_dds__LowState_
-from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowCmd_
-from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowState_
-from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import HandCmd_
-from pndbotics_sdk_py.idl.default import pnd_adam_msg_dds__HandCmd_
+from pndbotics_sdk_py.idl.default import adam_u_msg_dds__LowCmd_
+from pndbotics_sdk_py.idl.default import adam_u_msg_dds__LowState_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowCmd_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import LowState_
+from pndbotics_sdk_py.idl.adam_u.msg.dds_ import HandCmd_
+from pndbotics_sdk_py.idl.default import adam_u_msg_dds__HandCmd_
 ADAM_U_NUM_MOTOR = 19
 KP_CONFIG = [
     405.0,  # waistRoll (0)
@@ -92,11 +92,11 @@ if __name__ == '__main__':
     # Create a publisher to publish the data defined in UserData class
     pub = ChannelPublisher("rt/lowcmd", LowCmd_)
     pub.Init()
-    cmd = pnd_adam_msg_dds__LowCmd_(19)
+    cmd = adam_u_msg_dds__LowCmd_(19)
 
     hand_pub = ChannelPublisher("rt/handcmd", HandCmd_)
     hand_pub.Init()
-    hand_cmd = pnd_adam_msg_dds__HandCmd_()
+    hand_cmd = adam_u_msg_dds__HandCmd_()
 
     while True:
         step_start = time.perf_counter()

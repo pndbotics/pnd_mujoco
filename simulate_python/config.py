@@ -1,9 +1,9 @@
-ROBOT = "adam_u" # Robot name, "adam_u", "adam_lite", "adam_pro" , "adam_sp"
+ROBOT = "adam_sp" 
 ROBOT_SCENE = "../pnd_robots/" + ROBOT + "/scene.xml" # Robot scene
 HANDPOSE_SRC = 1 # 0 is sim2sim 1 is real2sim
 # For ROS2
 # SDK_TYPE="ROS2" # "ROS2" or "DDS"
-# DOMAIN_ID = 1 # Domain id
+# DOMAIN_ID = 2 # Domain id
 
 # For DDS
 SDK_TYPE="DDS" # "ROS2" or "DDS"

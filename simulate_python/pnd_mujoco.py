@@ -1,10 +1,16 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
+print(sys.path)
+# Now you can import pndbotics_sdk_py
+from pndbotics_sdk_py.core.channel import ChannelFactoryInitialize
+
 import time
 import mujoco
 import mujoco.viewer
 from threading import Thread
 import threading
 
-from pndbotics_sdk_py.core.channel import ChannelFactoryInitialize
 from pndbotics_sdk_py_bridge import pndSdkBridge, ElasticBand
 from pndbotics_ros_bridge import pndRos2Bridge
 

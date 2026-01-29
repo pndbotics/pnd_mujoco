@@ -242,7 +242,7 @@
 										<geom mesh="elbowLeft_1" class="visual" />
 										<body name="wristYawLeft" pos="-0.025 0.0285 -0.0729">
 											<inertial pos="1.826e-05 -0.00013856 -0.156089" quat="0.724287 0.000597867 -0.000753285 0.689498" mass="0.7346" diaginertia="0.00772314 0.00772306 0.000299893" />
-											<!-- <joint name="wristYaw_Left" pos="0 0 0" axis="0 0 1" actuatorfrcrange="-6.4 6.4" damping="3"/> -->
+											<joint name="wristYaw_Left" pos="0 0 0" axis="0 0 1" actuatorfrcrange="-6.4 6.4" damping="3"/>
 											<geom mesh="wristYawLeft_0" material="black" class="visual" />
 											<geom mesh="wristYawLeft_1" class="visual" />
 											<geom size="0.0302 0.14" pos="0 0 -0.14" type="capsule" class="collision" />
@@ -277,7 +277,7 @@
 										<geom mesh="elbowRight_1" class="visual" />
 										<body name="wristYawRight" pos="-0.025 -0.0285 -0.0729">
 											<inertial pos="1.64e-05 0.00018166 -0.177952" quat="0.698472 -0.000816832 0.000645819 0.715636" mass="0.7346" diaginertia="0.00788006 0.00787989 0.000312547" />
-											<!-- <joint name="wristYaw_Right" pos="0 0 0" axis="0 0 1" actuatorfrcrange="-6.4 6.4" damping="3"/> -->
+											<joint name="wristYaw_Right" pos="0 0 0" axis="0 0 1" actuatorfrcrange="-6.4 6.4" damping="3"/>
 											<geom mesh="wristYawRight_0" material="black" class="visual" />
 											<geom mesh="wristYawRight_1" class="visual" />
 											<geom size="0.0302 0.14" pos="0 0 -0.14" type="capsule" class="collision" />
@@ -311,12 +311,12 @@
 		<motor joint="shoulderRoll_Left" name="shoulderRoll_Left" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor joint="shoulderYaw_Left" name="shoulderYaw_Left" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor joint="elbow_Left" name="elbow_Left" ctrllimited="true" ctrlrange="-30.0 30.0" />
-		<!-- <motor joint="wristYaw_Left" name="wristYaw_Left" ctrllimited="true" ctrlrange="-6.4 6.4" /> -->
+		<motor joint="wristYaw_Left" name="wristYaw_Left" ctrllimited="true" ctrlrange="-6.4 6.4" />
 		<motor joint="shoulderPitch_Right" name="shoulderPitch_Right" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor joint="shoulderRoll_Right" name="shoulderRoll_Right" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor joint="shoulderYaw_Right" name="shoulderYaw_Right" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor joint="elbow_Right" name="elbow_Right" ctrllimited="true" ctrlrange="-30.0 30.0" />
-		<!-- <motor  joint="wristYaw_Right" name="wristYaw_Right" ctrllimited="true" ctrlrange="-6.4 6.4" /> -->
+		<motor  joint="wristYaw_Right" name="wristYaw_Right" ctrllimited="true" ctrlrange="-6.4 6.4" />
 	</actuator>
 	<sensor>
 		<jointpos name="pos_hipPitch_Left" joint="hipPitch_Left" />
@@ -338,12 +338,12 @@
 		<jointpos name="pos_shoulderRoll_Left" joint="shoulderRoll_Left" />
 		<jointpos name="pos_shoulderYaw_Left" joint="shoulderYaw_Left" />
 		<jointpos name="pos_elbow_Left" joint="elbow_Left" />
-		<!-- <jointpos name="pos_wristYaw_Left" joint="wristYaw_Left" /> -->
+		<jointpos name="pos_wristYaw_Left" joint="wristYaw_Left" />
 		<jointpos name="pos_shoulderPitch_Right" joint="shoulderPitch_Right" />
 		<jointpos name="pos_shoulderRoll_Right" joint="shoulderRoll_Right" />
 		<jointpos name="pos_shoulderYaw_Right" joint="shoulderYaw_Right" />
 		<jointpos name="pos_elbow_Right" joint="elbow_Right" />
-		<!-- <jointpos name="pos_wristYaw_Right" joint="wristYaw_Right" /> -->
+		<jointpos name="pos_wristYaw_Right" joint="wristYaw_Right" />
 
 		<jointvel name="vel_hipPitch_Left" joint="hipPitch_Left" />
 		<jointvel name="vel_hipRoll_Left" joint="hipRoll_Left" />
@@ -364,12 +364,12 @@
 		<jointvel name="vel_shoulderRoll_Left" joint="shoulderRoll_Left" />
 		<jointvel name="vel_shoulderYaw_Left" joint="shoulderYaw_Left" />
 		<jointvel name="vel_elbow_Left" joint="elbow_Left" />
-		<!-- <jointvel name="vel_wristYaw_Left" joint="wristYaw_Left" /> -->
+		<jointvel name="vel_wristYaw_Left" joint="wristYaw_Left" />
 		<jointvel name="vel_shoulderPitch_Right" joint="shoulderPitch_Right" />
 		<jointvel name="vel_shoulderRoll_Right" joint="shoulderRoll_Right" />
 		<jointvel name="vel_shoulderYaw_Right" joint="shoulderYaw_Right" />
 		<jointvel name="vel_elbow_Right" joint="elbow_Right" />
-		<!-- <jointvel name="vel_wristYaw_Right" joint="wristYaw_Right" /> -->
+		<jointvel name="vel_wristYaw_Right" joint="wristYaw_Right" />
 
 		<jointactuatorfrc name="force_hipPitch_Left" joint="hipPitch_Left" />
 		<jointactuatorfrc name="force_hipRoll_Left" joint="hipRoll_Left" />
@@ -390,12 +390,12 @@
 		<jointactuatorfrc name="force_shoulderRoll_Left" joint="shoulderRoll_Left" />
 		<jointactuatorfrc name="force_shoulderYaw_Left" joint="shoulderYaw_Left" />
 		<jointactuatorfrc name="force_elbow_Left" joint="elbow_Left" />
-		<!-- <jointactuatorfrc name="force_wristYaw_Left" joint="wristYaw_Left" /> -->
+		<jointactuatorfrc name="force_wristYaw_Left" joint="wristYaw_Left" />
 		<jointactuatorfrc name="force_shoulderPitch_Right" joint="shoulderPitch_Right" />
 		<jointactuatorfrc name="force_shoulderRoll_Right" joint="shoulderRoll_Right" />
 		<jointactuatorfrc name="force_shoulderYaw_Right" joint="shoulderYaw_Right" />
 		<jointactuatorfrc name="force_elbow_Right" joint="elbow_Right" />
-		<!-- <jointactuatorfrc name="force_wristYaw_Right" joint="wristYaw_Right" /> -->
+		<jointactuatorfrc name="force_wristYaw_Right" joint="wristYaw_Right" />
 
 		<framequat name="imu_quat" objtype="site" objname="imu" />
 		<gyro name="imu_gyro" site="imu" />

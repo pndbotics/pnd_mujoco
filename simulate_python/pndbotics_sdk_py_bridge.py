@@ -8,17 +8,15 @@ from pndbotics_sdk_py.core.channel import ChannelSubscriber, ChannelPublisher
 from pndbotics_sdk_py.utils.thread import RecurrentThread
 
 import config
-
+# Use pnd_adam IDL for all robot types
 from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowCmd_
 from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowState_
-from pndbotics_sdk_py.idl.default import pnd_adam_msg_dds__LowCmd_
-from pndbotics_sdk_py.idl.default import pnd_adam_msg_dds__LowState_
+from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import HandCmd_
+from pndbotics_sdk_py.idl.default import pnd_adam_msg_dds__LowCmd_ as LowCmd_default
+from pndbotics_sdk_py.idl.default import pnd_adam_msg_dds__LowState_ as LowState_default
 
-from  pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import HandCmd_
-
-
-TOPIC_LOWCMD = "rt/lowcmd"
 TOPIC_LOWSTATE = "rt/lowstate"
+TOPIC_LOWCMD = "rt/lowcmd"
 TOPIC_HAND_POSE = "rt/handcmd"
 
 MOTOR_SENSOR_NUM = 3
@@ -53,7 +51,7 @@ class pndSdkBridge:
                 self.have_frame_sensor_ = True
 
         # publisher state
-        self.low_state = pnd_adam_msg_dds__LowState_(self.num_motor)
+        self.low_state = LowState_default(self.num_motor)
         self.low_state_puber = ChannelPublisher(TOPIC_LOWSTATE, LowState_)
         self.low_state_puber.Init()
         self.lowStateThread = RecurrentThread(
@@ -61,13 +59,13 @@ class pndSdkBridge:
         )
         self.lowStateThread.Start()
 
-        if config.ROBOT != "adam_lite":
+        if config.ROBOT == "adam_u":
             # subscriber hand cmd_
             self.hand_cmd_suber = ChannelSubscriber(TOPIC_HAND_POSE, HandCmd_)
             self.hand_cmd_suber.Init(self.HandCmdHandler, 10)
 
         # subscriber cmd
-        pnd_adam_msg_dds__LowCmd_(self.num_motor)
+        LowCmd_default(self.num_motor)
         self.low_cmd_suber = ChannelSubscriber(TOPIC_LOWCMD, LowCmd_)
         self.low_cmd_suber.Init(self.LowCmdHandler, 10)
 

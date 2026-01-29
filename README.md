@@ -158,6 +158,25 @@ VIEWER_DT = 0.02
 
 ```
 
+## Quick Start Guide
+### Basic Usage
+1. Start the simulation with defaul robot (ADAM-U):
+```bash
+cd ~/pnd_mujoco_simulation/pnd_mujoco/simulate_python/
+python3 pnd_mujoco.py
+```
+2. Switch to a different robot:
+```bash
+./switch_robot.sh adam_lite
+# or
+./switch_robot.sh adam_sp
+# or
+./switch_robot.sh adam_u
+```
+3. Run the simulation with the new robot:
+```bash
+python3 pnd_mujoco.py
+
 ## 📖 Usage Examples
 
 ### Humanoid Virtual Hoist  
