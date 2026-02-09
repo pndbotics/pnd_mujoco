@@ -1,4 +1,8 @@
-# Overview
+# Introduction
+
+## PND mujoco
+
+`pnd_mujoco` is a simulator developed based on `pnd_sdk_python` and `mujoco`. Users can easily integrate the control programs developed with `pnd_sdk_python` and `pnd_ros2` into this simulator, enabling a seamless transition from simulation to physical development. The repository with a structure as follows:
 
 ![PND_API](./PND_API.png)
 
@@ -15,70 +19,28 @@
 [![License](https://img.shields.io/badge/License-BSD--3--Clause-059669?style=flat-square)](https://opensource.org/licenses/BSD-3-Clause)
 [![Issues](https://img.shields.io/badge/issues-open-EF4444?style=flat-square)](https://github.com/pndbotics/pnd_mujoco/issues)
 
-
-**A lightweight simulation framework integrating PND SDK and MuJoCo for rapid sim‑to‑real development. The repository provides two versions of the simulator, implemented respectively using Python CycloneDDS and Python ROS2 Humble.**
-
 </div>
 
-## ✨ Features
+## Directory Structure
+- `simulate_python`: Simulator implemented based on `pnd_sdk_python` and mujoco 
+- `pnd_sdk_python`: MJCF description files for robots supported by `pnd_sdk_python`
+- `example`: Example programs
 
-- **Plug‑and‑Play Sim‑to‑Real**: Run the same controller code in both simulation and real robots  
-- **Full PND SDK Compatibility**: Supports PND LowCmd/LowState messaging  
-- **ROS2 / DDS Support**: Select between ROS2 or pure DDS communication  
-- **PND Robot Models Included**: MJCF models for PND Adam‑U and others  
-- **Python & C++ APIs**: Unified control interface across platforms  
+## Supported `pnd_sdk_python` Messages:
+**Current version only supports low-level development, mainly used for sim to real verification of controller**
+- `LowCmd`: Motor control commands
+- `LowState`: Motor state information
+- `SportModeState`: Robot position and velocity data
+- `IMUState`: Torso IMU state at `rt/secondary_imu` topic
 
-## 📋 Table of Contents
+## C++ Simulator Installation (coming soon)
 
-- [What's New](#-whats-new)
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
-- [Usage Examples](#-usage-examples)
-- [API Reference](#-api-reference)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Reference](#-reference)
-- [Acknowledgement](#-acknowledgement)
-- [Contact](#-contact)
-- [Version Log](#-version-log)
-
-## 🆕 What's New
-
-### Latest Release — v1.2.0 (2026)
-
-#### 🚀 New Features
-- Python-based MuJoCo simulator using pnd_sdk_python
-- C++ simulator using pnd_sdk (coming soon)
-- Virtual elastic-band hoist for humanoid stability debugging
-- ROS2 Humble compatibility
-
-#### 🐛 Bug Fixes
-- Fixed DDS domain conflict issues  
-- Fixed joystick input offset issues
-
-#### ⚡ Performance Improvements
-- Reduced simulation step latency  
-- Improved synchronization between viewer and physics steps
-
-## 🛠 Installation
-
-### Prerequisites
-
-- **Ubuntu 22.04**
-- **Python 3.8+**
-- **MuJoCo 3.2.0**
-- **Cyclonedds**
-- **ROS2 Humble (optional)**
-
-### C++ Simulator Installation (coming soon)
-
-#### Dependencies
+### Dependencies
 ```bash
 sudo apt install libyaml-cpp-dev libspdlog-dev libboost-all-dev libglfw3-dev
 ```
 
-### Python Simulator Installation (`simulate_python`)
+## Python Simulator Installation (`simulate_python`)
 
 #### 1. Install pnd_sdk_python
 ```bash
@@ -221,30 +183,6 @@ python3 example/ros2/src/open_arm_ros2.py
 
 ### Message (DDS IDL) Type
 The PND Adam-U robot model uses the `adam_u idl` for low-level communication.
-
-## 🐛 Troubleshooting
-
-### ROS2 node not found  
-```bash
-source install/setup.bash
-ros2 pkg executables pnd_mujoco
-```
-
-### Permission issues  
-```bash
-sudo usermod -a -G dialout $USER
-sudo usermod -a -G tty $USER
-sudo reboot
-```
-
-### DDS/ROS2 domain conflict
-Use different `DOMAIN_ID` for simulation and real robot.
-
-## 🤝 Contributing
-
-Contributions are welcome.
-
-Feel free to open issues or pull requests.
 
 ## 📄 License
 
