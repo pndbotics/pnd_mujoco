@@ -23,7 +23,7 @@
 
 ## Directory Structure
 - `simulate_python`: Simulator implemented based on `pnd_sdk_python` and mujoco 
-- `pnd_sdk_python`: MJCF description files for robots supported by `pnd_sdk_python`
+- `pnd_robots`: MJCF description files for robots supported by `pnd_sdk_python`
 - `example`: Example programs
 
 ## Supported `pnd_sdk_python` Messages:
@@ -34,11 +34,6 @@
 - `IMUState`: Torso IMU state at `rt/secondary_imu` topic
 
 ## C++ Simulator Installation (coming soon)
-
-### Dependencies
-```bash
-sudo apt install libyaml-cpp-dev libspdlog-dev libboost-all-dev libglfw3-dev
-```
 
 ## Python Simulator Installation (`simulate_python`)
 
@@ -75,52 +70,36 @@ python3 example/python/open_arm.py
 The Adam‑U robot in simulation will lift and lower its arm.
 
 
-## 🚀 Quick Start
+## Usage
 
 ### Python Simulator Configuration  
 Configuration file: `simulate_python/config.py`
 
 ```python
-ROBOT = "adam_u"
-
-# Robot simulation scene file
+ROBOT = "adam_u" # Robot name, "adam_u", "adam_lite", "adam_pro" , "adam_sp"
 ROBOT_SCENE = "../pnd_robots/" + ROBOT + "/scene.xml" # Robot scene
-
-
-# dds domain id. It is recommended to use a different one from the real robot (real robot defaults to 0)
-Separate startup for ROS2 or DDS and their corresponding IDs
+HANDPOSE_SRC = 1 # 0 is sim2sim 1 is real2sim
 # For ROS2
-SDK_TYPE="ROS2" # "ROS2" or "DDS"
-DOMAIN_ID = 2 # Domain id
+# SDK_TYPE="ROS2" # "ROS2" or "DDS"
+# DOMAIN_ID = 1 # Domain id
 
 # For DDS
 SDK_TYPE="DDS" # "ROS2" or "DDS"
 DOMAIN_ID = 1 # Domain id
 
-# Network interface name. For simulation, it is recommended to use the local loopback "lo"
-INTERFACE = "lo" # Interface
-
-# Whether to print robot link, joint, sensor and other information. True means print enabled
-PRINT_SCENE_INFORMATION = True
+INTERFACE = "lo" # Interface 
 
 USE_JOYSTICK = 1 # Simulate PND WirelessController using a gamepad
 JOYSTICK_TYPE = "xbox" # support "xbox" and "switch" gamepad layout
 JOYSTICK_DEVICE = 0 # Joystick number
 
-# Whether to use the virtual elastic band. 1 means enabled
-# Mainly used to simulate the hanging state during adam robot initialization
-ENABLE_ELASTIC_BAND = False
+PRINT_SCENE_INFORMATION = False # Print link, joint and sensors information of robot
+ENABLE_ELASTIC_BAND = True # Virtual spring band, used for lifting adam
 
-# Simulation timestep (s)
-# To ensure simulation stability, the timestep must be larger than the rendering time of one viewer.sync() call
-SIMULATE_DT = 0.003
-
-# Visualization timestep. 0.02 corresponds to 50fps
-VIEWER_DT = 0.02
+SIMULATE_DT = 0.001  # Need to be larger than the runtime of viewer.sync()
+VIEWER_DT = 0.01  # 100 fps for viewer
 
 ```
-
-## 📖 Usage Examples
 
 ### Humanoid Virtual Hoist  
 To simulate the suspension & release process of humanoid robots:
@@ -135,13 +114,62 @@ ENABLE_ELASTIC_BAND = 1
 
 ### Sim to Real
 
-Examples located in `example/`:
+The example folder contains simple examples of using different interfaces to make the robot stand up and then lie down. These examples demonstrate how to implement the transition from simulation to reality using interfaces provided by PND. Here is an explanation of each folder name:
 
 | Folder   | Description                            |
 | -------- | -------------------------------------- |
-| `cpp`    | C++ examples using `pnd_sdk`          |
 | `python` | Python examples using `pnd_sdk_python` |
 | `ros2`   | ROS2 examples using `pnd_ros2`         |
+
+#### pnd_sdk_python
+
+1. Install
+```bash
+# Install system dependencies
+sudo apt install libyaml-cpp-dev libspdlog-dev libboost-all-dev libglfw3-dev python3-pip
+
+# Install Python SDK
+cd ~
+git clone https://github.com/pndbotics/pnd_sdk_python.git
+cd pnd_sdk_python
+sudo pip3 install -e .
+```
+
+2. Run
+```bash
+cd ~/pnd_sdk_python/example/low_level/adam_lite
+python3 adam_lite_low_level_example.py  enp59s0
+```
+
+#### pnd_ros2
+
+1. Source
+
+```bash
+# Download & build pnd_ros2
+git clone https://github.com/pndbotics/pnd_ros2.git
+cd pnd_ros2
+colcon build
+source install/setup.bash
+```
+
+2. Modify `config.py`
+DDS is used by default. To switch to ROS2:
+Open the configuration file `config.py`
+```bash
+cd ~
+xdg-open ~/pnd_mujoco/simulate_python/config.py
+```
+Set the SDK type to ROS2:
+```bash
+SDK_TYPE="ROS2"
+```
+
+3. Run
+```bash
+cd ~/pnd_sdk_python/example/low_level/adam_lite # Robot name, "adam_u", "adam_lite", "adam_pro" , "adam_sp"
+python3 adam_lite_low_level_example.py  enp59s0 # Robot name, "adam_u", "adam_lite", "adam_pro" , "adam_sp", replace enp59s0 with the actual wired network interface name
+```
 
 ### Python Example: Sim vs Real
 
@@ -157,23 +185,6 @@ if len(sys.argv) < 2:
     ChannelFactoryInitialize(1, "lo")   # simulation
 else:
     ChannelFactoryInitialize(1, sys.argv[1])   # real robot
-```
-
-## 🔧 API Reference
-
-### ROS2 Example
-
-#### 1. Source pnd_ros2
-```bash
-cd pnd_ros2
-source setup.sh
-```
-
-#### 2. Run in simulation or real robot
-```bash
-source ~/pnd_ros2/setup.sh
-export ROS_DOMAIN_ID=2
-python3 example/ros2/src/open_arm_ros2.py
 ```
 
 ### Supported PND SDK Messages
