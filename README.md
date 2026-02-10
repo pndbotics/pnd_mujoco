@@ -154,6 +154,7 @@ source install/setup.bash
 ```
 
 2. Modify `config.py`
+
 DDS is used by default. To switch to ROS2:
 Open the configuration file `config.py`
 ```bash
@@ -166,6 +167,7 @@ SDK_TYPE="ROS2"
 ```
 
 3. Run
+
 ```bash
 cd ~/pnd_sdk_python/example/low_level/adam_lite # Robot name, "adam_u", "adam_lite", "adam_pro" , "adam_sp"
 python3 adam_lite_low_level_example.py  enp59s0 # Robot name, "adam_u", "adam_lite", "adam_pro" , "adam_sp", replace enp59s0 with the actual wired network interface name
