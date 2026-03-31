@@ -162,8 +162,8 @@ class pndSdkBridge:
             fingers_pos = msg.position[0:12]
         
         if config.ROBOT.endswith("_omnipicker"):
-            self.mj_data.ctrl[self.num_motor] = fingers_pos[5] * 0.001
-            self.mj_data.ctrl[self.num_motor + 1] = fingers_pos[11] * 0.001
+            self.mj_data.ctrl[self.num_motor] = fingers_pos[0] * 0.001
+            self.mj_data.ctrl[self.num_motor + 1] = fingers_pos[6] * 0.001
         else:
             
             # 创建 fingers 列表，每个 fingers_pos 的值重复两次
