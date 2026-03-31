@@ -74,8 +74,16 @@ close_arm_pos = np.array([0, 0, 0,
 ],
                                 dtype=float)
 
-open_hand = np.array([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000], dtype=int)
+## if you are using omnipicker, you can set the open hand position index[5] & index[11] to 1000
+## all other number set to 0, which means only the gripper will move
+open_hand = np.array([0, 0, 0, 0, 0, 1000, 0, 0, 0, 0, 0, 1000], dtype=int)
 close_hand = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], dtype=int)
+
+## if you are using robots with hands you can set the first 6 index to 1000
+## whitch means the left hand fingers will open, and the last 6 index to 1000 means the right hand fingers will open
+
+#     open_hand = np.array([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000], dtype=int)
+#     close_hand = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], dtype=int)
 
 dt = 0.0025
 runing_time = 0.0

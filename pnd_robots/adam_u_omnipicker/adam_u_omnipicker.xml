@@ -326,7 +326,6 @@
     <motor joint="wristYaw_Left" name="wristYaw_Left" ctrlrange="-6.4 6.4" />
     <motor joint="wristPitch_Left" name="wristPitch_Left" ctrlrange="-6.4 6.4" />
     <motor joint="wristRoll_Left" name="wristRoll_Left" ctrlrange="-6.4 6.4" />
-    <motor joint="left_gripper_joint" name="left_gripper" ctrlrange="-1 1" />
     <motor joint="shoulderPitch_Right" name="shoulderPitch_Right" ctrlrange="-65.0 65.0" />
     <motor joint="shoulderRoll_Right" name="shoulderRoll_Right" ctrlrange="-65.0 65.0" />
     <motor joint="shoulderYaw_Right" name="shoulderYaw_Right" ctrlrange="-65.0 65.0" />
@@ -334,7 +333,8 @@
     <motor joint="wristYaw_Right" name="wristYaw_Right" ctrlrange="-6.4 6.4" />
     <motor joint="wristPitch_Right" name="wristPitch_Right" ctrlrange="-6.4 6.4" />
     <motor joint="wristRoll_Right" name="wristRoll_Right" ctrlrange="-6.4 6.4" />
-    <motor joint="right_gripper_joint" name="right_gripper" ctrlrange="-1 1" />
+    <position joint="left_gripper_joint" name="left_gripper" ctrlrange="-1 1" />
+    <position joint="right_gripper_joint" name="right_gripper" ctrlrange="-1 1" />
 
 
   </actuator>
