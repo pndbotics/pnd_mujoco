@@ -28,8 +28,10 @@ class pndSdkBridge:
     def __init__(self, mj_model, mj_data):
         self.mj_model = mj_model
         self.mj_data = mj_data
-
-        if(config.ROBOT != "adam_lite"):
+        
+        if config.ROBOT.endswith("_omnipicker"):
+            self.num_motor = self.mj_model.nu - 2
+        elif(config.ROBOT != "adam_lite"):
             self.num_motor = self.mj_model.nu - 24
         else:
             self.num_motor = self.mj_model.nu
@@ -158,6 +160,11 @@ class pndSdkBridge:
     def HandCmdHandler(self, msg: HandCmd_):
         if self.mj_data != None:
             fingers_pos = msg.position[0:12]
+        
+        if config.ROBOT.endswith("_omnipicker"):
+            self.mj_data.ctrl[self.num_motor] = fingers_pos[0] * 0.001
+            self.mj_data.ctrl[self.num_motor + 1] = fingers_pos[6] * 0.001
+        else:
             
             # 创建 fingers 列表，每个 fingers_pos 的值重复两次
             fingers = [finger for finger in fingers_pos for _ in range(2)]
