@@ -26,7 +26,9 @@ class pndRos2Bridge:
         self.mj_model = mj_model
         self.mj_data = mj_data
 
-        if(config.ROBOT != "adam_lite"):
+        if config.ROBOT.endswith("_omnipicker"):
+            self.num_motor = self.mj_model.nu - 2
+        elif(config.ROBOT != "adam_lite"):
             self.num_motor = self.mj_model.nu - 24
         else:
             self.num_motor = self.mj_model.nu
