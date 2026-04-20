@@ -1,8 +1,8 @@
 from typing import Any
 import traceback
-import pygame
 import mujoco
 import numpy as np
+import pygame
 
 import config
 from pndbotics_sdk_py.idl.pnd_adam.msg.dds_ import LowCmd_, LowState_, HandCmd_
@@ -26,7 +26,9 @@ class pndRos2Bridge:
         self.mj_model = mj_model
         self.mj_data = mj_data
 
-        if(config.ROBOT != "adam_lite"):
+        if config.ROBOT.endswith("_omnipicker"):
+            self.num_motor = self.mj_model.nu - 2
+        elif(config.ROBOT != "adam_lite"):
             self.num_motor = self.mj_model.nu - 24
         else:
             self.num_motor = self.mj_model.nu
@@ -168,36 +170,41 @@ class pndRos2Bridge:
         for msg in msgs:
             if self.mj_data != None:
                 fingers_pos = msg.position[0:12]
+
+        if config.ROBOT.endswith("_omnipicker"):
+            self.mj_data.ctrl[self.num_motor] = fingers_pos[0] * 0.001
+            self.mj_data.ctrl[self.num_motor + 1] = fingers_pos[6] * 0.001
+        else:
                 
-                # 创建 fingers 列表，每个 fingers_pos 的值重复两次
-                fingers = [finger for finger in fingers_pos for _ in range(2)]
+            # 创建 fingers 列表，每个 fingers_pos 的值重复两次
+            fingers = [finger for finger in fingers_pos for _ in range(2)]
+            
+            if config.HANDPOSE_SRC == 0:
+                for i in range(self.num_motor, self.num_motor + 24):
+                    self.mj_data.ctrl[i] = fingers[i - self.num_motor]
+            else:
+                # 修改 fingers 数组中的特定值
+                fingers[10] = fingers[8] * 0.5
+                fingers[8] = 2 * fingers[10]
+                fingers[9] = 2 * fingers[10]
+                fingers[22] = fingers[20] * 0.5
+                fingers[20] = 2 * fingers[22]
+                fingers[21] = 2 * fingers[22]
                 
-                if config.HANDPOSE_SRC == 0:
-                    for i in range(self.num_motor, self.num_motor + 24):
-                        self.mj_data.ctrl[i] = fingers[i - self.num_motor]
-                else:
-                    # 修改 fingers 数组中的特定值
-                    fingers[10] = fingers[8] * 0.5
-                    fingers[8] = 2 * fingers[10]
-                    fingers[9] = 2 * fingers[10]
-                    fingers[22] = fingers[20] * 0.5
-                    fingers[20] = 2 * fingers[22]
-                    fingers[21] = 2 * fingers[22]
+                for i in range(self.num_motor, self.num_motor + 24):
+                    self.mj_data.ctrl[i] = 1.6 - fingers[i - self.num_motor] * 0.0016
                     
-                    for i in range(self.num_motor, self.num_motor + 24):
-                        self.mj_data.ctrl[i] = 1.6 - fingers[i - self.num_motor] * 0.0016
-                        
-                        if i == self.num_motor + 10:
-                            self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
-                        
-                        if i in (self.num_motor + 11, self.num_motor + 9, self.num_motor + 8):
-                            self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
-                        
-                        if i == self.num_motor + 22:
-                            self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
-                        
-                        if i in (self.num_motor + 23, self.num_motor + 21, self.num_motor + 20):
-                            self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
+                    if i == self.num_motor + 10:
+                        self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
+                    
+                    if i in (self.num_motor + 11, self.num_motor + 9, self.num_motor + 8):
+                        self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
+                    
+                    if i == self.num_motor + 22:
+                        self.mj_data.ctrl[i] = 0.5 - fingers[i - self.num_motor] * 0.001
+                    
+                    if i in (self.num_motor + 23, self.num_motor + 21, self.num_motor + 20):
+                        self.mj_data.ctrl[i] = 1.0 - fingers[i - self.num_motor] * 0.001
 
 
     def SetupJoystick(self, device_id=0, js_type="xbox"):
