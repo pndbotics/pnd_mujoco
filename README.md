@@ -14,8 +14,8 @@
 [![CycloneDDS](https://img.shields.io/badge/CycloneDDS-latest-6D28D9)](https://cyclonedds.io/)
 [![ROS2](https://img.shields.io/badge/ROS2-Humble-22314E?logo=ros&logoColor=white)](https://docs.ros.org/en/humble/)
 
-![Updated At](https://img.shields.io/badge/Updated_At-December-64748B?style=flat-square)
-![Version](https://img.shields.io/badge/Version-1.0.4-2563EB?style=flat-square)
+![Updated At](https://img.shields.io/badge/Updated_At-April-64748B?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.3.1-2563EB?style=flat-square)
 [![License](https://img.shields.io/badge/License-BSD--3--Clause-059669?style=flat-square)](https://opensource.org/licenses/BSD-3-Clause)
 [![Issues](https://img.shields.io/badge/issues-open-EF4444?style=flat-square)](https://github.com/pndbotics/pnd_mujoco/issues)
 
@@ -32,8 +32,6 @@
 - `LowState`: Motor state information
 - `SportModeState`: Robot position and velocity data
 - `IMUState`: Torso IMU state at `rt/secondary_imu` topic
-
-## C++ Simulator Installation (coming soon)
 
 ## Python Simulator Installation (`simulate_python`)
 
@@ -173,6 +171,48 @@ cd ~/pnd_sdk_python/example/low_level/adam_lite # Robot name, "adam_u", "adam_li
 python3 adam_lite_low_level_example.py  enp59s0 # Robot name, "adam_u", "adam_lite", "adam_pro" , "adam_sp", replace enp59s0 with the actual wired network interface name
 ```
 
+#### pnd_sdk_cpp
+
+1. Install
+
+To build your own application with the SDK, you can install the pnd_sdk_cpp to your system directory:
+
+```bash
+cd ~/pnd_sdk_cpp
+mkdir build
+cd build
+cmake .. 
+sudo make install
+```
+
+Or install pnd_sdk_cpp to a specified directory:
+
+```bash
+cd ~/pnd_sdk_cpp
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/pndbotics_robotics
+sudo make install
+```
+
+> [!IMPORTANT]
+> If you install to a non-standard path, remember to add that path to your `${CMAKE_PREFIX_PATH}` so that `find_package()` can locate the SDK in your own projects.
+
+
+2. Run Example
+
+- **Run on real robot**:
+
+```bash
+# Get network interface name
+ip a
+
+# Run the control example (replace enp59s0 with the wired network interface name)
+cd ~/pnd_sdk_cpp/build/bin
+sudo ./lite_ankle_swing_example enp3s0
+```
+
+
 ### Python Example: Sim vs Real
 
 ```bash
@@ -225,6 +265,8 @@ The PND Adam-U robot model uses the `adam_u idl` for low-level communication.
 
 | Version | Date       | Updates                                                                              |
 | ------- | ---------- | ------------------------------------------------------------------------------------ |
+| v1.3.1  | 2026-04-20 | Fix gripper bug |
+| v1.3.0  | 2026-04-02 | Add adam_pro with gripper |
 | v1.2.0  | 2026-01-22 | DDS refactoring version |
 | v1.0.4  | 2025-12-09 | Update xbox axis & Add lo ro home in switch|
 | v1.0.3  | 2025-11-20 | Get state in ros2 |
